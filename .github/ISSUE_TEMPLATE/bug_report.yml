@@ -1,0 +1,87 @@
+name: Bug report
+description: Something renders wrong, crashes, or does not behave as documented.
+title: "[Bug]: "
+labels: ["bug", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the report! For **security issues** please use the private advisory channel described in
+        [SECURITY.md](https://github.com/Agredo/MolDraw.Net/blob/main/SECURITY.md) instead of this form.
+
+  - type: dropdown
+    id: package
+    attributes:
+      label: Affected package
+      multiple: true
+      options:
+        - MolDraw.Depiction
+        - MolDraw.Core (NCDK engine)
+        - MolDraw.Skia (renderer / export)
+        - MolDraw.Maui (MoleculeView control)
+        - Sample app
+        - Documentation
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: Package version
+      placeholder: "0.3.0"
+    validations:
+      required: true
+
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      description: .NET SDK, OS and architecture, MAUI/UI framework, SkiaSharp version.
+      placeholder: ".NET SDK 11.0.100, Windows 11 ARM64, WinUI unpackaged, SkiaSharp 3.119.4"
+    validations:
+      required: true
+
+  - type: textarea
+    id: repro
+    attributes:
+      label: How to reproduce
+      description: SMILES or molfile plus the smallest code snippet that shows the problem.
+      render: csharp
+      placeholder: |
+        var depiction = new DepictionBuilder().Build(new MoleculeLoader().ParseSmiles("CC(=O)O"));
+        File.WriteAllBytes("out.png", new MoleculeImageExporter().RenderPng(depiction, 400, 300));
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behaviour
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behaviour
+      description: Include the exception type and stack trace if it throws.
+    validations:
+      required: true
+
+  - type: textarea
+    id: images
+    attributes:
+      label: Screenshots or exported PNG/SVG
+      description: Drag the images in here — a picture makes depiction bugs much faster to diagnose.
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checklist
+      options:
+        - label: I searched existing issues for the same problem.
+          required: true
+        - label: I am using the latest release of the package.
+          required: false

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:md="clr-namespace:MolDraw.Maui;assembly=MolDraw.Maui"
+             xmlns:skia="clr-namespace:MolDraw.Skia;assembly=MolDraw.Skia"
+             xmlns:local="clr-namespace:MolDraw.Maui.Sample"
+             x:Class="MolDraw.Maui.Sample.MainPage"
+             x:DataType="local:MainViewModel"
+             Title="MolDraw.Net">
+
+    <Grid ColumnDefinitions="300,*" Padding="12" ColumnSpacing="12">
+
+        <ScrollView>
+            <VerticalStackLayout Spacing="8">
+                <Label Text="Molecule" FontAttributes="Bold" />
+                <Picker ItemsSource="{Binding Molecules}"
+                        SelectedItem="{Binding SelectedMolecule}"
+                        ItemDisplayBinding="{Binding Name, x:DataType=local:MoleculeItem}" />
+                <Entry Text="{Binding Smiles}" Placeholder="SMILES" />
+                <Label Text="{Binding ErrorMessage}" TextColor="Red" FontSize="12" />
+
+                <Label Text="Display" FontAttributes="Bold" />
+                <HorizontalStackLayout Spacing="6"><CheckBox IsChecked="{Binding IsDark}" /><Label Text="Dark theme" VerticalOptions="Center" /></HorizontalStackLayout>
+                <HorizontalStackLayout Spacing="6"><CheckBox IsChecked="{Binding AromaticCircles}" /><Label Text="Aromatic circles" VerticalOptions="Center" /></HorizontalStackLayout>
+                <HorizontalStackLayout Spacing="6"><CheckBox IsChecked="{Binding ShowAtomIndices}" /><Label Text="Atom indices" VerticalOptions="Center" /></HorizontalStackLayout>
+                <Label Text="{Binding BondWidth, StringFormat='Bond width {0:0.0}'}" />
+                <Slider Minimum="0.5" Maximum="4" Value="{Binding BondWidth}" />
+                <Label Text="{Binding FontSize, StringFormat='Font size {0:0}'}" />
+                <Slider Minimum="8" Maximum="24" Value="{Binding FontSize}" />
+
+                <Label Text="Highlighting" FontAttributes="Bold" />
+                <Picker ItemsSource="{Binding HighlightModes}" SelectedItem="{Binding HighlightMode}" />
+                <Picker ItemsSource="{Binding Colormaps}" SelectedItem="{Binding Colormap}"
+                        ItemDisplayBinding="{Binding Name, x:DataType=skia:Colormap}" />
+                <HorizontalStackLayout Spacing="6"><CheckBox IsChecked="{Binding ShowColorBar}" /><Label Text="Colour bar" VerticalOptions="Center" /></HorizontalStackLayout>
+                <Button Text="Random weights" Command="{Binding RandomizeCommand}" />
+
+                <Label Text="{Binding AtomInfo}" FontSize="12" />
+                <Label Text="{Binding LastTapped}" FontSize="12" />
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <Border Grid.Column="1" StrokeThickness="1" Stroke="LightGray" BackgroundColor="{Binding Background}">
+            <md:MoleculeView Smiles="{Binding Smiles}"
+                             RenderOptions="{Binding RenderOptions}"
+                             AtomWeights="{Binding AtomWeights}"
+                             Colormap="{Binding Colormap}"
+                             ShowColorBar="{Binding ShowColorBar}"
+                             SelectedAtomIndex="{Binding SelectedAtomIndex}"
+                             HoveredAtomIndex="{Binding HoveredAtomIndex}"
+                             ErrorMessage="{Binding ErrorMessage}"
+                             AtomTappedCommand="{Binding AtomTappedCommand}" />
+        </Border>
+    </Grid>
+</ContentPage>

@@ -1,0 +1,49 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- Same platform selection as src/MolDraw.Maui (Windows on Windows, Apple/Android on macOS, -p:MolDrawAllTargets=true for all). -->
+  <PropertyGroup>
+    <MolDrawWindows Condition="'$(MolDrawWindows)' == '' and ('$(MolDrawAllTargets)' == 'true' or $([MSBuild]::IsOSPlatform('Windows')))">true</MolDrawWindows>
+    <MolDrawAndroid Condition="'$(MolDrawAndroid)' == '' and ('$(MolDrawAllTargets)' == 'true' or $([MSBuild]::IsOSPlatform('OSX')))">true</MolDrawAndroid>
+    <MolDrawIos Condition="'$(MolDrawIos)' == '' and ('$(MolDrawAllTargets)' == 'true' or $([MSBuild]::IsOSPlatform('OSX')))">true</MolDrawIos>
+    <MolDrawMacCatalyst Condition="'$(MolDrawMacCatalyst)' == '' and ('$(MolDrawAllTargets)' == 'true' or $([MSBuild]::IsOSPlatform('OSX')))">true</MolDrawMacCatalyst>
+    <TargetFrameworks Condition="'$(MolDrawAndroid)' == 'true'">$(TargetFrameworks);net10.0-android</TargetFrameworks>
+    <TargetFrameworks Condition="'$(MolDrawIos)' == 'true'">$(TargetFrameworks);net10.0-ios</TargetFrameworks>
+    <TargetFrameworks Condition="'$(MolDrawMacCatalyst)' == 'true'">$(TargetFrameworks);net10.0-maccatalyst</TargetFrameworks>
+    <TargetFrameworks Condition="'$(MolDrawWindows)' == 'true'">$(TargetFrameworks);$(MauiWindowsTargetFramework)</TargetFrameworks>
+
+    <OutputType>Exe</OutputType>
+    <OutputType Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">WinExe</OutputType>
+    <UseMaui>true</UseMaui>
+    <SingleProject>true</SingleProject>
+    <RootNamespace>MolDraw.Maui.Sample</RootNamespace>
+    <ApplicationTitle>MolDraw.Net Sample</ApplicationTitle>
+    <ApplicationId>net.moldraw.sample</ApplicationId>
+    <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
+    <ApplicationVersion>1</ApplicationVersion>
+    <WindowsPackageType>None</WindowsPackageType>
+    <!-- [ObservableProperty] fields: MAUI bindings do not need WinRT marshalling; partial properties would need LangVersion=preview with CommunityToolkit.Mvvm 8.4.0. -->
+    <NoWarn>$(NoWarn);MVVMTK0045</NoWarn>
+
+    <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">21.0</SupportedOSPlatformVersion>
+    <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">15.0</SupportedOSPlatformVersion>
+    <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">15.0</SupportedOSPlatformVersion>
+    <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">$(MauiWindowsMinVersion)</SupportedOSPlatformVersion>
+    <TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">$(MauiWindowsMinVersion)</TargetPlatformMinVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <MauiIcon Include="Resources\AppIcon\appicon.svg" Color="#2B6CB0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Maui.Controls" />
+    <PackageReference Include="CommunityToolkit.Mvvm" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\MolDraw.Maui\MolDraw.Maui.csproj" />
+    <ProjectReference Include="..\..\src\MolDraw.Core\MolDraw.Core.csproj" />
+  </ItemGroup>
+
+</Project>
+

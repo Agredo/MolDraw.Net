@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>$(MolDrawTargetFramework)</TargetFramework>
+    <PackageId>MolDraw.Core</PackageId>
+    <Description>The NCDK chemistry engine for MolDraw.Net: turns SMILES, MOL and SDF input into clean 2D depictions — layout, aromaticity, ring-aware double bonds, wedge/hash stereo and implicit hydrogens. Atom indices follow the input (RDKit-compatible heavy-atom order), so per-atom model output lines up. Registers IChemistryEngine via AddMolDrawCore(); depends on NCDK (LGPL-2.1).</Description>
+    <PackageTags>$(PackageTags);ncdk;cdk;smiles;molfile;sdf;engine</PackageTags>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="NCDK" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MolDraw.Depiction\MolDraw.Depiction.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="MolDraw.Core.Tests" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,59 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Target frameworks depend on the build OS so that a machine with only the `maui-windows` workload can build:
+      Windows: net10.0-windows10.0.19041.0
+      macOS:   net10.0-android, net10.0-ios, net10.0-maccatalyst
+    Opt in to more targets (requires the corresponding workloads):
+      -p:MolDrawAllTargets=true            all four platforms (use this for publishing the NuGet package)
+      -p:MolDrawAndroid=true / MolDrawIos=true / MolDrawMacCatalyst=true / MolDrawWindows=true
+  -->
+  <PropertyGroup>
+    <MolDrawWindows Condition="'$(MolDrawWindows)' == '' and ('$(MolDrawAllTargets)' == 'true' or $([MSBuild]::IsOSPlatform('Windows')))">true</MolDrawWindows>
+    <MolDrawAndroid Condition="'$(MolDrawAndroid)' == '' and ('$(MolDrawAllTargets)' == 'true' or $([MSBuild]::IsOSPlatform('OSX')))">true</MolDrawAndroid>
+    <MolDrawIos Condition="'$(MolDrawIos)' == '' and ('$(MolDrawAllTargets)' == 'true' or $([MSBuild]::IsOSPlatform('OSX')))">true</MolDrawIos>
+    <MolDrawMacCatalyst Condition="'$(MolDrawMacCatalyst)' == '' and ('$(MolDrawAllTargets)' == 'true' or $([MSBuild]::IsOSPlatform('OSX')))">true</MolDrawMacCatalyst>
+
+    <!--
+      Each append is a plain expansion; do NOT "clean up" the leading separator with a property function such as
+      $(TargetFrameworks.Trim(';')): MSBuild escapes the semicolons a property function returns, so the SDK then sees
+      one combined target framework instead of a list and fails with NETSDK1046.
+    -->
+    <TargetFrameworks Condition="'$(MolDrawAndroid)' == 'true'">$(TargetFrameworks);net10.0-android</TargetFrameworks>
+    <TargetFrameworks Condition="'$(MolDrawIos)' == 'true'">$(TargetFrameworks);net10.0-ios</TargetFrameworks>
+    <TargetFrameworks Condition="'$(MolDrawMacCatalyst)' == 'true'">$(TargetFrameworks);net10.0-maccatalyst</TargetFrameworks>
+    <TargetFrameworks Condition="'$(MolDrawWindows)' == 'true'">$(TargetFrameworks);$(MauiWindowsTargetFramework)</TargetFrameworks>
+
+    <UseMaui>true</UseMaui>
+    <SingleProject>true</SingleProject>
+    <RootNamespace>MolDraw.Maui</RootNamespace>
+
+    <!--
+      Keep one output folder for every runtime identifier. A RID-specific build of this library would otherwise put
+      MolDraw.Maui.pri into bin/<tfm>/<rid>/, while the WinUI PRI merge of a RID-specific consuming app still resolves
+      it before that copy happens and fails with PRI175/PRI252 ("MolDraw.Maui.pri not found").
+    -->
+    <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+
+    <PackageId>MolDraw.Maui</PackageId>
+    <Description>MoleculeView — a .NET MAUI control for interactive 2D chemical structures. Bind SMILES (depicted by any registered IChemistryEngine) or a precomputed depiction, colour atoms by heat-map weights, select and hover atoms with MVVM bindings and commands, follow light/dark themes, and export the rendered structure. Contains no chemistry toolkit: add MolDraw.Core for the NCDK engine or write your own.</Description>
+    <PackageTags>$(PackageTags);maui;control;mvvm;molecule-view;android;ios;windows</PackageTags>
+
+    <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">21.0</SupportedOSPlatformVersion>
+    <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">15.0</SupportedOSPlatformVersion>
+    <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">15.0</SupportedOSPlatformVersion>
+    <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">$(MauiWindowsMinVersion)</SupportedOSPlatformVersion>
+    <TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">$(MauiWindowsMinVersion)</TargetPlatformMinVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Maui.Controls" />
+    <PackageReference Include="SkiaSharp.Views.Maui.Controls" />
+    <PackageReference Include="SkiaSharp" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MolDraw.Skia\MolDraw.Skia.csproj" />
+  </ItemGroup>
+
+</Project>

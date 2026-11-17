@@ -1,0 +1,25 @@
+# Build output
+bin/
+obj/
+artifacts/
+TestResults/
+*.trx
+*.coverage
+*.binlog
+
+# IDEs
+.vs/
+.vscode/
+.idea/
+*.user
+*.suo
+*.DotSettings.user
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Local feed credentials
+nuget.config.local
+

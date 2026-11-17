@@ -1,0 +1,25 @@
+version: 2
+updates:
+  - package-ecosystem: "nuget"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+    groups:
+      nuget-minor:
+        patterns: ["*"]
+        update-types: ["minor", "patch"]
+    ignore:
+      # SkiaSharp 4.x is a breaking change for the renderer and for consuming MAUI apps: keep the 3.119 line.
+      - dependency-name: "SkiaSharp"
+        versions: ["[4.0.0,)"]
+      - dependency-name: "SkiaSharp.Views.Maui.Controls"
+        versions: ["[4.0.0,)"]
+    labels: ["dependencies"]
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+    labels: ["dependencies", "ci"]

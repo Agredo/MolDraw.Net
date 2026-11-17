@@ -1,0 +1,147 @@
+name: Release
+
+# Publishes MolDraw.Net to nuget.org.
+#
+#   * push a tag `v<version>` -> build, test, pack, create the GitHub release, push to nuget.org
+#   * manual run            -> build, test, pack and upload the packages as workflow artifacts only
+#
+# Requires the repository secret NUGET_API_KEY (see docs/PUBLISHING.md). Without it the push is skipped and only
+# the GitHub release is created, so a missing secret never breaks a release build.
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+env:
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+
+permissions:
+  contents: read
+
+jobs:
+  pack:
+    name: Build, test and pack
+    runs-on: windows-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '11.0.x'
+
+      - name: Read version and verify the tag
+        id: version
+        shell: pwsh
+        run: |
+          [xml]$props = Get-Content Directory.Build.props
+          $version = @($props.SelectNodes('//PropertyGroup/Version') | ForEach-Object { $_.InnerText.Trim() })[0]
+          "version=$version" >> $env:GITHUB_OUTPUT
+
+          if ($env:GITHUB_REF_TYPE -eq 'tag') {
+              if ($env:GITHUB_REF_NAME -ne "v$version") {
+                  throw "Tag $env:GITHUB_REF_NAME does not match <Version>$version</Version> in Directory.Build.props."
+              }
+          }
+
+      # MolDraw.Maui has to be packed for every platform, so all four MAUI workloads are required on the runner.
+      - name: Install MAUI workloads
+        run: dotnet workload install maui maui-ios maui-maccatalyst
+
+      - name: Pack
+        run: pwsh build/Pack.ps1 -NoWarn NU1507
+
+      - name: Verify packages
+        run: pwsh build/Test-NuGetPackages.ps1
+
+      - name: Upload packages
+        uses: actions/upload-artifact@v4
+        with:
+          name: nupkg
+          path: artifacts/packages/*
+          if-no-files-found: error
+          retention-days: 14
+
+  github-release:
+    name: GitHub release
+    runs-on: ubuntu-latest
+    needs: [pack]
+    if: github.ref_type == 'tag'
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: nupkg
+          path: artifacts/packages
+
+      - name: Extract release notes from CHANGELOG.md
+        shell: pwsh
+        run: |
+          $version = '${{ needs.pack.outputs.version }}'
+          $lines = Get-Content CHANGELOG.md
+          $start = ($lines | Select-String -Pattern "^##\s*\[?$([regex]::Escape($version))\]?" -SimpleMatch:$false | Select-Object -First 1)
+          if (-not $start) { "MolDraw.Net $version" | Set-Content release-notes.md; return }
+          $body = [System.Collections.Generic.List[string]]::new()
+          for ($i = $start.LineNumber; $i -lt $lines.Count; $i++) {
+              if ($lines[$i] -match '^##\s') { break }
+              $body.Add($lines[$i])
+          }
+          "# MolDraw.Net $version`n" + ($body -join "`n") | Set-Content release-notes.md
+
+      - name: Create release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "${{ github.ref_name }}" \
+            artifacts/packages/*.nupkg artifacts/packages/*.snupkg \
+            --title "MolDraw.Net ${{ needs.pack.outputs.version }}" \
+            --notes-file release-notes.md \
+            --verify-tag
+
+  push-nuget:
+    name: Push to nuget.org
+    runs-on: windows-latest
+    needs: [pack]
+    if: github.ref_type == 'tag'
+    # Add required reviewers in the repository settings so a release cannot be published by accident.
+    environment:
+      name: nuget.org
+      url: https://www.nuget.org/packages/MolDraw.Maui
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: nupkg
+          path: artifacts/packages
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '11.0.x'
+
+      - name: Check for the API key
+        id: key
+        shell: pwsh
+        env:
+          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+        run: |
+          if ([string]::IsNullOrWhiteSpace($env:NUGET_API_KEY)) {
+              Write-Host '::notice::NUGET_API_KEY is not configured - skipping the nuget.org push.'
+              'present=false' >> $env:GITHUB_OUTPUT
+          } else {
+              'present=true' >> $env:GITHUB_OUTPUT
+          }
+
+      # Push-NuGet.ps1 reads NUGET_API_KEY from the environment and -Force skips the interactive confirmation.
+      - name: Push
+        if: steps.key.outputs.present == 'true'
+        env:
+          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+        run: pwsh build/Push-NuGet.ps1 -Force

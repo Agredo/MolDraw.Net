@@ -1,0 +1,19 @@
+# Normalise line endings in the repository, keep Windows scripts CRLF-free.
+* text=auto eol=lf
+
+*.slnx   text eol=lf
+*.cs     text eol=lf diff=csharp
+*.csproj text eol=lf
+*.props  text eol=lf
+*.xaml   text eol=lf
+*.yml    text eol=lf
+*.md     text eol=lf
+*.ps1    text eol=lf
+*.sh     text eol=lf
+*.bat    text eol=crlf
+*.cmd    text eol=crlf
+
+# Binary
+*.png binary
+*.nupkg binary
+*.snupkg binary

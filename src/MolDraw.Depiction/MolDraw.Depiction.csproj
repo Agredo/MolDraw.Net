@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>$(MolDrawTargetFramework)</TargetFramework>
+    <PackageId>MolDraw.Depiction</PackageId>
+    <Description>The engine-neutral contract between chemistry toolkits and 2D chemical structure rendering: immutable atoms, bonds, rings and coordinates (MoleculeDepiction) plus the IChemistryEngine seam. Zero dependencies — feed it RDKit, Indigo, NCDK or your own layout and render it with MolDraw.Skia.</Description>
+    <PackageTags>$(PackageTags);model;rdkit;indigo;engine-neutral</PackageTags>
+  </PropertyGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="MolDraw.Core.Tests" />
+    <InternalsVisibleTo Include="MolDraw.Skia.Tests" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,101 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+env:
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+  # The library projects treat warnings as errors; several package sources trigger NU1507.
+  NO_WARN: -p:NoWarn=NU1507
+
+jobs:
+  windows:
+    name: Build and test (Windows)
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          # The packages target net10.0; any SDK that can build .NET 10 works.
+          dotnet-version: '11.0.x'
+
+      - name: Install MAUI workload
+        run: dotnet workload install maui-windows
+
+      - name: Restore
+        run: dotnet restore MolDraw.Net.slnx ${{ env.NO_WARN }}
+
+      - name: Build
+        run: dotnet build MolDraw.Net.slnx -c Release --no-restore -warnaserror ${{ env.NO_WARN }}
+
+      - name: Test
+        run: dotnet test MolDraw.Net.slnx -c Release --no-build --no-restore --logger "trx;LogFileName=test-results.trx"
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-windows
+          path: '**/test-results.trx'
+          if-no-files-found: ignore
+
+      - name: Upload rendered snapshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: snapshots
+          path: artifacts/snapshots
+          if-no-files-found: ignore
+
+  linux:
+    name: Build and test (Linux, no MAUI)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '11.0.x'
+
+      # MolDraw.Maui only targets the platforms of the build host, so the solution as a whole cannot be built on
+      # Linux. The toolkit-neutral packages and both test projects can.
+      - name: Test MolDraw.Depiction + MolDraw.Core + MolDraw.Skia
+        run: |
+          dotnet test tests/MolDraw.Core.Tests -c Release ${{ env.NO_WARN }}
+          dotnet test tests/MolDraw.Skia.Tests -c Release ${{ env.NO_WARN }}
+
+  pack:
+    name: Pack (verify all four MAUI targets)
+    runs-on: windows-latest
+    needs: [windows]
+    # Only meaningful when the extra workloads are available; failure here does not block a merge.
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '11.0.x'
+
+      - name: Install workloads
+        run: dotnet workload install maui maui-ios maui-maccatalyst
+
+      - name: Pack
+        run: pwsh build/Pack.ps1 -NoWarn NU1507 -SkipTests
+
+      - name: Verify packages
+        run: pwsh build/Test-NuGetPackages.ps1
+
+      - name: Upload packages
+        uses: actions/upload-artifact@v4
+        with:
+          name: nupkg
+          path: artifacts/packages/*
+          if-no-files-found: error

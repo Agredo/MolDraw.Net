@@ -1,0 +1,53 @@
+name: Feature request
+description: Suggest a feature, a new chemistry engine adapter, or a rendering improvement.
+title: "[Feature]: "
+labels: ["enhancement", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Ideas that respect the layering rules in
+        [docs/ARCHITECTURE.md](https://github.com/Agredo/MolDraw.Net/blob/main/docs/ARCHITECTURE.md) are much easier to
+        accept: `MolDraw.Depiction` stays dependency-free, `MolDraw.Skia` stays toolkit-free and UI-free,
+        `MolDraw.Maui` stays chemistry-free.
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Depiction model / IChemistryEngine seam
+        - NCDK engine (parsing, layout, perception)
+        - Renderer (labels, bonds, stereo, colours, themes)
+        - Highlighting / hit testing
+        - MAUI control (bindings, gestures, performance)
+        - Export (PNG/SVG)
+        - New engine adapter (RDKit, Indigo, …)
+        - Documentation / samples
+        - Packaging / CI
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem does this solve?
+      description: Describe your use case, not just the API you would like.
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: API sketch, expected rendering, or a link to how another tool does it (RDKit, CDK, Indigo…).
+    validations:
+      required: false
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Workarounds you already use, or reasons the existing API does not fit.
+    validations:
+      required: false
