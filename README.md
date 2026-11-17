@@ -11,6 +11,7 @@ depiction model.
 [![MolDraw.Depiction](https://img.shields.io/nuget/v/MolDraw.Depiction?label=MolDraw.Depiction&logo=nuget)](https://www.nuget.org/packages/MolDraw.Depiction)
 [![license](https://img.shields.io/badge/license-Apache--2.0-green)](LICENSE)
 [![.NET](https://img.shields.io/badge/.NET-10-512BD4)](https://dotnet.microsoft.com)
+[![CI](https://github.com/Agredo/MolDraw.Net/actions/workflows/ci.yml/badge.svg)](https://github.com/Agredo/MolDraw.Net/actions/workflows/ci.yml)
 
 <table>
 <tr>

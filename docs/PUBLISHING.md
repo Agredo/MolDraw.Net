@@ -131,7 +131,7 @@ step into MolDraw source and the `.pdb` matches the shipped assemblies.
 
 If the GitHub Release workflow is enabled (see §7), pushing a `v*` tag does all of this automatically.
 
-### SourceLink (optional, once the repo has a git history)
+### SourceLink (optional, recommended for the first nuget.org release)
 
 `PublishRepositoryUrl` and `EmbedUntrackedSources` are already enabled, so the packages carry the repository URL.
 Adding [Microsoft.SourceLink.GitHub](https://www.nuget.org/packages/Microsoft.SourceLink.GitHub) (currently 11.0.100)
@@ -142,9 +142,10 @@ to the four library projects gives nuget.org's "Source repository" deep links an
 <PackageReference Include="Microsoft.SourceLink.GitHub" Version="11.0.100" PrivateAssets="all" />
 ```
 
-It needs a real git clone with a GitHub remote; source link paths are resolved from the commit that produced the build.
-That is why it is not wired up yet: this working copy has no usable `.git`. Add the reference and the
-`Directory.Packages.props` entry after the repository is pushed, then pack again.
+It needs a real git clone with a GitHub remote; source link paths are resolved from the commit that produced the
+build. The repository now has one (`main` tracks `origin`), so this can be enabled at any time: add the reference and
+the `Directory.Packages.props` entry, then pack, verify and smoke-test again. It is deliberately not wired up yet
+because the packages in `artifacts/packages` were produced before the first commit existed.
 
 ## 6. After publishing
 
