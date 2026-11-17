@@ -43,7 +43,7 @@ public class ExternalDepictionTests
         var depiction = Phenol();
 
         Assert.Equal(7, depiction.Atoms.Count);
-        Assert.Equal(1.5, depiction.GetMedianBondLength()!.Value, 3);
+        Assert.Equal(1.5, depiction.GetMedianBondLength().GetValueOrDefault(), 3);
 
         var renderer = new MoleculeRenderer();
         var layout = renderer.Layout(new SKRect(0, 0, 400, 300), depiction, MoleculeRenderOptions.Light);
@@ -51,7 +51,7 @@ public class ExternalDepictionTests
 
         // the oxygen is the rightmost atom, so its screen position lies right of the ring centre
         Assert.True(layout.AtomPositions[6].X > layout.AtomPositions[3].X);
-        Assert.Equal(6, layout.HitTestAtom(layout.AtomPositions[6], tolerance: 4).Value);
+        Assert.Equal(6, layout.HitTestAtom(layout.AtomPositions[6], tolerance: 4).GetValueOrDefault(-1));
 
         var png = new MoleculeImageExporter(renderer).RenderPng(depiction, 400, 300, background: SKColors.White);
         Assert.True(png.Length > 1000);

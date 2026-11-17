@@ -29,14 +29,13 @@ jobs:
       - name: Install MAUI workload
         run: dotnet workload install maui-windows
 
-      - name: Restore
-        run: dotnet restore MolDraw.Net.slnx ${{ env.NO_WARN }}
-
+      # The WinUI target resolves a RuntimeIdentifier on its own, so restore has to run as part of the build
+      # (an explicit RID-less restore leaves the win-x64 runtime pack out of the assets file).
       - name: Build
-        run: dotnet build MolDraw.Net.slnx -c Release --no-restore -warnaserror ${{ env.NO_WARN }}
+        run: dotnet build MolDraw.Net.slnx -c Release ${{ env.NO_WARN }}
 
       - name: Test
-        run: dotnet test MolDraw.Net.slnx -c Release --no-build --no-restore --logger "trx;LogFileName=test-results.trx"
+        run: dotnet test MolDraw.Net.slnx -c Release --no-build --logger "trx;LogFileName=test-results.trx" ${{ env.NO_WARN }}
 
       - name: Upload test results
         if: always()
@@ -66,6 +65,9 @@ jobs:
 
       # MolDraw.Maui only targets the platforms of the build host, so the solution as a whole cannot be built on
       # Linux. The toolkit-neutral packages and both test projects can.
+      - name: Install fonts for SkiaSharp
+        run: sudo apt-get update && sudo apt-get install -y libfontconfig1
+
       - name: Test MolDraw.Depiction + MolDraw.Core + MolDraw.Skia
         run: |
           dotnet test tests/MolDraw.Core.Tests -c Release ${{ env.NO_WARN }}

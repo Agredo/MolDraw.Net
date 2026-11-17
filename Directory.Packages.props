@@ -9,6 +9,7 @@
 
     <!-- Rendering (do NOT move to SkiaSharp 4.x) -->
     <PackageVersion Include="SkiaSharp" Version="$(SkiaSharpVersion)" />
+    <PackageVersion Include="SkiaSharp.NativeAssets.Linux" Version="$(SkiaSharpVersion)" />
     <PackageVersion Include="SkiaSharp.Views.Maui.Controls" Version="$(SkiaSharpVersion)" />
 
     <!-- MAUI -->
