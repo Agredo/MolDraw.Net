@@ -11,12 +11,13 @@ updates:
         patterns: ["*"]
         update-types: ["minor", "patch"]
     ignore:
-      # SkiaSharp 4.x is a breaking change for the renderer and for consuming MAUI apps: keep the 3.119 line.
+      # Keep the SkiaSharp family on one line: a major bump needs renderer changes and a new MAUI major, do it manually.
       - dependency-name: "SkiaSharp"
-        versions: ["[4.0.0,)"]
+        update-types: ["version-update:semver-major"]
       - dependency-name: "SkiaSharp.Views.Maui.Controls"
-        versions: ["[4.0.0,)"]
-    labels: ["dependencies"]
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "SkiaSharp.NativeAssets.Linux"
+        update-types: ["version-update:semver-major"]    labels: ["dependencies"]
 
   - package-ecosystem: "github-actions"
     directory: "/"

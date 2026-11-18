@@ -6,9 +6,9 @@
     <MolDrawAndroid Condition="'$(MolDrawAndroid)' == '' and ('$(MolDrawAllTargets)' == 'true' or $([MSBuild]::IsOSPlatform('OSX')))">true</MolDrawAndroid>
     <MolDrawIos Condition="'$(MolDrawIos)' == '' and ('$(MolDrawAllTargets)' == 'true' or $([MSBuild]::IsOSPlatform('OSX')))">true</MolDrawIos>
     <MolDrawMacCatalyst Condition="'$(MolDrawMacCatalyst)' == '' and ('$(MolDrawAllTargets)' == 'true' or $([MSBuild]::IsOSPlatform('OSX')))">true</MolDrawMacCatalyst>
-    <TargetFrameworks Condition="'$(MolDrawAndroid)' == 'true'">$(TargetFrameworks);net10.0-android</TargetFrameworks>
-    <TargetFrameworks Condition="'$(MolDrawIos)' == 'true'">$(TargetFrameworks);net10.0-ios</TargetFrameworks>
-    <TargetFrameworks Condition="'$(MolDrawMacCatalyst)' == 'true'">$(TargetFrameworks);net10.0-maccatalyst</TargetFrameworks>
+    <TargetFrameworks Condition="'$(MolDrawAndroid)' == 'true'">$(TargetFrameworks);net11.0-android</TargetFrameworks>
+    <TargetFrameworks Condition="'$(MolDrawIos)' == 'true'">$(TargetFrameworks);net11.0-ios</TargetFrameworks>
+    <TargetFrameworks Condition="'$(MolDrawMacCatalyst)' == 'true'">$(TargetFrameworks);net11.0-maccatalyst</TargetFrameworks>
     <TargetFrameworks Condition="'$(MolDrawWindows)' == 'true'">$(TargetFrameworks);$(MauiWindowsTargetFramework)</TargetFrameworks>
 
     <OutputType>Exe</OutputType>
@@ -24,7 +24,7 @@
     <!-- [ObservableProperty] fields: MAUI bindings do not need WinRT marshalling; partial properties would need LangVersion=preview with CommunityToolkit.Mvvm 8.4.0. -->
     <NoWarn>$(NoWarn);MVVMTK0045</NoWarn>
 
-    <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">21.0</SupportedOSPlatformVersion>
+    <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">24.0</SupportedOSPlatformVersion>
     <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">15.0</SupportedOSPlatformVersion>
     <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">15.0</SupportedOSPlatformVersion>
     <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">$(MauiWindowsMinVersion)</SupportedOSPlatformVersion>

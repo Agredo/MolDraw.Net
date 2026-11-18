@@ -1,14 +1,14 @@
 # Publishing MolDraw.Net to NuGet
 
 Everything needed to get the four packages onto nuget.org under the publisher **Agredo Application**, and to repeat it
-for every release. Maintainer runbook — run it from a machine with the .NET 10 (or later) SDK and the MAUI workloads.
+for every release. Maintainer runbook — run it from a machine with the .NET 11 SDK and the MAUI workloads.
 
 | Package | Role | Depends on |
 |---|---|---|
 | `MolDraw.Depiction` | model + `IChemistryEngine` seam | – |
 | `MolDraw.Core` | NCDK engine | `MolDraw.Depiction`, NCDK 1.6.1 (LGPL-2.1) |
-| `MolDraw.Skia` | SkiaSharp renderer | `MolDraw.Depiction`, SkiaSharp 3.119.x |
-| `MolDraw.Maui` | MAUI `MoleculeView` control | `MolDraw.Skia`, MAUI 10, SkiaSharp |
+| `MolDraw.Skia` | SkiaSharp renderer | `MolDraw.Depiction`, SkiaSharp 4.156.x |
+| `MolDraw.Maui` | MAUI `MoleculeView` control | `MolDraw.Skia`, MAUI 11, SkiaSharp |
 
 Repository: <https://github.com/Agredo/MolDraw.Net> — this URL is baked into every package as `ProjectUrl` and
 `RepositoryUrl` (`Directory.Build.props`).
@@ -79,15 +79,15 @@ pwsh ./build/Pack.ps1 -SkipTests      # when you just ran the tests
 
 `Pack.ps1` runs `dotnet pack MolDraw.Net.slnx -c Release -p:MolDrawAllTargets=true -p:NoWarn=NU1507`. `MolDrawAllTargets`
 is required: `MolDraw.Maui` only builds the platform TFMs of the current host otherwise, and the package would be
-missing `lib/net10.0-android36.0`, `lib/net10.0-ios26.0` or `lib/net10.0-maccatalyst26.0`.
+missing `lib/net11.0-android37.0`, `lib/net11.0-ios27.2` or `lib/net11.0-maccatalyst27.2`.
 
 Requirements for the full package:
 
 | Workload | Needed for |
 |---|---|
-| `maui-windows` | `net10.0-windows10.0.19041.0` |
-| `maui-android` | `net10.0-android` |
-| `maui-ios`, `maui-maccatalyst` | `net10.0-ios`, `net10.0-maccatalyst` (compiling the library is enough; no Mac needed unless you publish an app) |
+| `maui-windows` | `net11.0-windows10.0.19041.0` |
+| `maui-android` | `net11.0-android` |
+| `maui-ios`, `maui-maccatalyst` | `net11.0-ios`, `net11.0-maccatalyst` (compiling the library is enough; no Mac needed unless you publish an app) |
 
 Result: `artifacts/packages` contains four `.nupkg` and four `.snupkg` files.
 

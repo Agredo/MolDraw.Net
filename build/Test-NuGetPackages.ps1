@@ -36,7 +36,8 @@ if (-not $Version) {
 
 $expectedIds = @('MolDraw.Depiction', 'MolDraw.Core', 'MolDraw.Skia', 'MolDraw.Maui')
 $projectUrl = 'https://github.com/Agredo/MolDraw.Net'
-$mauiTfms = @('net10.0-android36.0', 'net10.0-ios26.0', 'net10.0-maccatalyst26.0', 'net10.0-windows10.0.19041')
+# Platform versions come from the installed MAUI workload (e.g. net11.0-ios27.2), so match them by pattern.
+$mauiTfmPatterns = @('^lib/net11\.0-android[0-9.]+/MolDraw\.Maui\.dll$', '^lib/net11\.0-ios[0-9.]+/MolDraw\.Maui\.dll$', '^lib/net11\.0-maccatalyst[0-9.]+/MolDraw\.Maui\.dll$', '^lib/net11\.0-windows10\.0\.19041/MolDraw\.Maui\.dll$')
 
 $failures = [System.Collections.Generic.List[string]]::new()
 
@@ -124,12 +125,13 @@ foreach ($id in $expectedIds) {
             Check ($dependencies -contains 'Microsoft.Maui.Controls') 'depends on Microsoft.Maui.Controls'
             Check ($dependencies -notcontains 'MolDraw.Core') 'does NOT depend on MolDraw.Core'
             Check ($dependencies -notcontains 'NCDK') 'does NOT depend on NCDK'
-            foreach ($tfm in $mauiTfms) {
-                $hasDll = $entries.Keys -contains "lib/$tfm/MolDraw.Maui.dll"
-                Check $hasDll "lib/$tfm contains MolDraw.Maui.dll"
+            foreach ($pattern in $mauiTfmPatterns) {
+                $match = @($entries.Keys -match $pattern)
+                $label = if ($match.Count -gt 0) { $match[0] -replace '^lib/', '' -replace '/MolDraw\.Maui\.dll$', '' } else { $pattern }
+                Check ($match.Count -gt 0) "lib/$label contains MolDraw.Maui.dll"
             }
             # The WinUI resource index is only produced for Windows; its absence breaks WinUI consumers at runtime.
-            Check ($entries.Keys -contains 'lib/net10.0-windows10.0.19041/MolDraw.Maui.pri') 'WinUI resource index MolDraw.Maui.pri is packed'
+            Check ($entries.Keys -contains 'lib/net11.0-windows10.0.19041/MolDraw.Maui.pri') 'WinUI resource index MolDraw.Maui.pri is packed'
             Check (-not ($entries.Keys | Where-Object { $_ -like '*NCDK*' })) 'contains no NCDK files'
         }
     }

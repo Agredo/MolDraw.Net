@@ -15,7 +15,7 @@ tools, on x64 and **ARM64**.
 dotnet add package MolDraw.Skia
 ```
 
-Targets `net10.0`; depends on `SkiaSharp` **3.119.x** and [MolDraw.Depiction](https://www.nuget.org/packages/MolDraw.Depiction/).
+Targets `net11.0`; depends on `SkiaSharp` **4.156.x** and [MolDraw.Depiction](https://www.nuget.org/packages/MolDraw.Depiction/).
 
 ## Quick start
 

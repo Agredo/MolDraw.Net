@@ -22,7 +22,7 @@ For **security issues** do not open an issue; follow [SECURITY.md](SECURITY.md).
 
 Requirements:
 
-* .NET SDK 10 or later (the packages target `net10.0`).
+* .NET SDK 11 or later (the packages target `net11.0`).
 * Windows: the `maui-windows` workload (`dotnet workload install maui-windows`) — enough to build and test everything.
 * For the full package with all four MAUI targets: the `maui-android`, `maui-ios` and `maui-maccatalyst` workloads.
 

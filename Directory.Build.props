@@ -2,16 +2,16 @@
 
   <!-- Central build settings for all MolDraw.Net projects. -->
   <PropertyGroup>
-    <MolDrawTargetFramework>net10.0</MolDrawTargetFramework>
+    <MolDrawTargetFramework>net11.0</MolDrawTargetFramework>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <Deterministic>true</Deterministic>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
 
-    <!-- MAUI / SkiaSharp versions shared with the consumer apps (SkiaSharp must stay on 3.119.x). -->
-    <MauiVersion>10.0.130</MauiVersion>
-    <MauiWindowsTargetFramework>net10.0-windows10.0.19041.0</MauiWindowsTargetFramework>
+    <!-- MAUI / SkiaSharp versions shared with the consumer apps. -->
+    <MauiVersion>11.0.10</MauiVersion>
+    <MauiWindowsTargetFramework>net11.0-windows10.0.19041.0</MauiWindowsTargetFramework>
     <MauiWindowsMinVersion>10.0.17763.0</MauiWindowsMinVersion>
 
     <RepositoryRoot>$(MSBuildThisFileDirectory)</RepositoryRoot>
@@ -24,7 +24,7 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <IsPackable>true</IsPackable>
 
-    <Version>0.3.0</Version>
+    <Version>0.4.0</Version>
     <Authors>Agredo Application</Authors>
     <Company>Agredo Application</Company>
     <Product>MolDraw.Net</Product>

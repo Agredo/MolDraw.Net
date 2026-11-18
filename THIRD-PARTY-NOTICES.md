@@ -6,7 +6,7 @@ MolDraw.Net is licensed under the Apache License 2.0. The packages depend on or 
 |---|---|---|---|
 | [NCDK](https://github.com/kazuyaujihara/NCDK) 1.6.1 (C# port of the Chemistry Development Kit) | MolDraw.Core (NuGet dependency, not redistributed in our packages) | LGPL-2.1-only | Source: https://github.com/kazuyaujihara/NCDK |
 | MathNet.Numerics.Signed (transitive via NCDK) | MolDraw.Core | MIT | |
-| [SkiaSharp](https://github.com/mono/SkiaSharp) 3.119 | MolDraw.Skia, MolDraw.Maui | MIT | |
+| [SkiaSharp](https://github.com/mono/SkiaSharp) 4.156 | MolDraw.Skia, MolDraw.Maui | MIT | |
 | .NET MAUI | MolDraw.Maui | MIT | |
 | Viridis, Plasma, Inferno, Magma colour maps (sampled values) | MolDraw.Skia | CC0 (Matplotlib, van der Walt / Smith / Huang) | |
 | Turbo colour map (sampled values) | MolDraw.Skia | Apache-2.0 (Google LLC) | |

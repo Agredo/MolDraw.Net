@@ -2,8 +2,8 @@
 
   <!--
     Target frameworks depend on the build OS so that a machine with only the `maui-windows` workload can build:
-      Windows: net10.0-windows10.0.19041.0
-      macOS:   net10.0-android, net10.0-ios, net10.0-maccatalyst
+      Windows: net11.0-windows10.0.19041.0
+      macOS:   net11.0-android, net11.0-ios, net11.0-maccatalyst
     Opt in to more targets (requires the corresponding workloads):
       -p:MolDrawAllTargets=true            all four platforms (use this for publishing the NuGet package)
       -p:MolDrawAndroid=true / MolDrawIos=true / MolDrawMacCatalyst=true / MolDrawWindows=true
@@ -19,9 +19,9 @@
       $(TargetFrameworks.Trim(';')): MSBuild escapes the semicolons a property function returns, so the SDK then sees
       one combined target framework instead of a list and fails with NETSDK1046.
     -->
-    <TargetFrameworks Condition="'$(MolDrawAndroid)' == 'true'">$(TargetFrameworks);net10.0-android</TargetFrameworks>
-    <TargetFrameworks Condition="'$(MolDrawIos)' == 'true'">$(TargetFrameworks);net10.0-ios</TargetFrameworks>
-    <TargetFrameworks Condition="'$(MolDrawMacCatalyst)' == 'true'">$(TargetFrameworks);net10.0-maccatalyst</TargetFrameworks>
+    <TargetFrameworks Condition="'$(MolDrawAndroid)' == 'true'">$(TargetFrameworks);net11.0-android</TargetFrameworks>
+    <TargetFrameworks Condition="'$(MolDrawIos)' == 'true'">$(TargetFrameworks);net11.0-ios</TargetFrameworks>
+    <TargetFrameworks Condition="'$(MolDrawMacCatalyst)' == 'true'">$(TargetFrameworks);net11.0-maccatalyst</TargetFrameworks>
     <TargetFrameworks Condition="'$(MolDrawWindows)' == 'true'">$(TargetFrameworks);$(MauiWindowsTargetFramework)</TargetFrameworks>
 
     <UseMaui>true</UseMaui>
@@ -39,7 +39,7 @@
     <Description>MoleculeView — a .NET MAUI control for interactive 2D chemical structures. Bind SMILES (depicted by any registered IChemistryEngine) or a precomputed depiction, colour atoms by heat-map weights, select and hover atoms with MVVM bindings and commands, follow light/dark themes, and export the rendered structure. Contains no chemistry toolkit: add MolDraw.Core for the NCDK engine or write your own.</Description>
     <PackageTags>$(PackageTags);maui;control;mvvm;molecule-view;android;ios;windows</PackageTags>
 
-    <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">21.0</SupportedOSPlatformVersion>
+    <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">24.0</SupportedOSPlatformVersion>
     <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">15.0</SupportedOSPlatformVersion>
     <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">15.0</SupportedOSPlatformVersion>
     <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">$(MauiWindowsMinVersion)</SupportedOSPlatformVersion>

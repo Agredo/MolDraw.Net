@@ -1,7 +1,7 @@
 # MolDraw.Net
 
 **2D chemical structures for .NET — draw, highlight and interact with molecules in .NET MAUI, Avalonia, WPF or on
-the server.** Rendering with [SkiaSharp 3.119](https://github.com/mono/SkiaSharp), chemistry with
+the server.** Rendering with [SkiaSharp 4.156](https://github.com/mono/SkiaSharp), chemistry with
 [NCDK](https://github.com/kazuyaujihara/NCDK) — or with your own engine: the renderer only sees a toolkit-neutral
 depiction model.
 
@@ -70,9 +70,9 @@ dotnet add package MolDraw.Core          # the NCDK chemistry engine
 dotnet add package MolDraw.Skia          # rendering only (Avalonia/server)
 ```
 
-Requirements: .NET 10, SkiaSharp **3.119.x** (not 4.x), .NET MAUI 10 for `MolDraw.Maui`.
-The packages are architecture-neutral (`net10.0`, `net10.0-android`, `net10.0-ios`, `net10.0-maccatalyst`,
-`net10.0-windows10.0.19041.0`) and run on **x64 and ARM64**; the native Skia binaries are restored by SkiaSharp for
+Requirements: .NET 11, SkiaSharp **4.156.x**, .NET MAUI 11 for `MolDraw.Maui`.
+The packages are architecture-neutral (`net11.0`, `net11.0-android`, `net11.0-ios`, `net11.0-maccatalyst`,
+`net11.0-windows10.0.19041.0`) and run on **x64 and ARM64**; the native Skia binaries are restored by SkiaSharp for
 the consuming app's RID (`win-arm64`, `android-arm64`, `osx`, `maccatalyst`, `ios`). See [ARM64](#arm64).
 
 ### Upgrading from 0.1.x
@@ -341,9 +341,9 @@ Only `MolDraw.Core` / `MolDraw.Core.Ncdk` ever touch an NCDK type; `MolDraw.Depi
 |---|---|
 | Windows x64 (WinUI, unpackaged) | built, tested, sample runs |
 | Windows ARM64 (WinUI, unpackaged) | built, tested (139 tests), `dotnet publish -r win-arm64` verified |
-| Android (arm64-v8a, arm, x64, x86) | built here; arm64-v8a APK with `libSkiaSharp.so` verified |
+| Android (arm64-v8a, arm, x64, x86) | built here (minimum API 24 / Android 7.0); arm64-v8a APK with `libSkiaSharp.so` verified |
 | iOS, Mac Catalyst (arm64) | TFMs compile here, not signed/run (needs macOS) |
-| Linux / macOS / console / server | via `MolDraw.Skia` (+ `MolDraw.Core`) on `net10.0`, any RID incl. `linux-arm64`/`osx-arm64` |
+| Linux / macOS / console / server | via `MolDraw.Skia` (+ `MolDraw.Core`) on `net11.0`, any RID incl. `linux-arm64`/`osx-arm64` |
 
 ## Known limitations
 
@@ -372,11 +372,11 @@ dotnet pack MolDraw.Net.slnx -c Release          # -> artifacts/packages (*.nupk
 dotnet run --project samples/MolDraw.Maui.Sample  # Windows
 ```
 
-On Windows only the `maui-windows` workload is needed (`MolDraw.Maui` then targets `net10.0-windows10.0.19041.0`).
+On Windows only the `maui-windows` workload is needed (`MolDraw.Maui` then targets `net11.0-windows10.0.19041.0`).
 To build/pack the cross-platform package (all four MAUI platforms, requires the `android`/`ios`/`maccatalyst`
 workloads) pass `-p:MolDrawAllTargets=true` – the resulting `MolDraw.Maui` package then contains
-`lib/net10.0-android36.0`, `lib/net10.0-ios26.0`, `lib/net10.0-maccatalyst26.0` and
-`lib/net10.0-windows10.0.19041`:
+`lib/net11.0-android37.0`, `lib/net11.0-ios27.2`, `lib/net11.0-maccatalyst27.2` and
+`lib/net11.0-windows10.0.19041`:
 
 ```shell
 dotnet pack MolDraw.Net.slnx -c Release -p:MolDrawAllTargets=true   # -> artifacts/packages
@@ -396,10 +396,10 @@ from SkiaSharp's runtime packages for the RID of the consuming app.
 
 ```shell
 # Windows ARM64 desktop app (unpackaged WinUI)
-dotnet publish samples/MolDraw.Maui.Sample -c Release -f net10.0-windows10.0.19041.0 -r win-arm64
+dotnet publish samples/MolDraw.Maui.Sample -c Release -f net11.0-windows10.0.19041.0 -r win-arm64
 
 # Android, arm64-v8a only
-dotnet build samples/MolDraw.Maui.Sample -f net10.0-android -p:MolDrawAndroid=true -p:RuntimeIdentifier=android-arm64
+dotnet build samples/MolDraw.Maui.Sample -f net11.0-android -p:MolDrawAndroid=true -p:RuntimeIdentifier=android-arm64
 
 # Console/server tool on Linux ARM64 (or osx-arm64)
 dotnet publish MyTool.csproj -c Release -r linux-arm64

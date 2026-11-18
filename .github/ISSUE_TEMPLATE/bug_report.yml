@@ -37,7 +37,7 @@ body:
     attributes:
       label: Environment
       description: .NET SDK, OS and architecture, MAUI/UI framework, SkiaSharp version.
-      placeholder: ".NET SDK 11.0.100, Windows 11 ARM64, WinUI unpackaged, SkiaSharp 3.119.4"
+      placeholder: ".NET SDK 11.0.100, Windows 11 ARM64, WinUI unpackaged, SkiaSharp 4.156.1"
     validations:
       required: true
 

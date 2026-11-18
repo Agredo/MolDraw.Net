@@ -9,6 +9,38 @@ they are always listed under **Changed** with a migration note.
 
 Nothing yet.
 
+## [0.4.0] - 2026-11-18
+
+Moved to **.NET 11**, **.NET MAUI 11** and **SkiaSharp 4**. Chemistry, depiction output and the public API of the four
+packages are unchanged, but the target frameworks are not, so this is a major-version-style bump for consumers: an app
+that references these packages has to target `net11.0` as well.
+
+### Changed
+
+- **Breaking:** every package targets `net11.0` instead of `net10.0`. `MolDraw.Maui` ships
+  `net11.0-android37.0`, `net11.0-ios27.2`, `net11.0-maccatalyst27.2` and
+  `net11.0-windows10.0.19041.0`. Requires the .NET 11 SDK (11.0.100 or later) and the .NET 11 MAUI workloads.
+- `Microsoft.Maui.Controls` 10.0.130 → 11.0.10; `SkiaSharp`, `SkiaSharp.Views.Maui.Controls` and
+  `SkiaSharp.NativeAssets.Linux` 3.119.4 → 4.156.1.
+- `MoleculeRenderer` now builds its wedge/wavy paths with `SKPathBuilder` — SkiaSharp 4 obsoleted the mutable `SKPath`
+  drawing methods. Rendering output is unchanged (the snapshot tests still match).
+- The explicit `Microsoft.Extensions.DependencyInjection.Abstractions` package reference was dropped: the assembly is
+  part of the .NET 11 shared framework, so `AddMolDrawCore()` and the renderer registration need no extra dependency.
+- The MAUI sample uses MVVM Toolkit partial properties and concrete collection types, which keeps the WinUI build free
+  of `MVVMTK0045`/`CsWinRT1032` trimming warnings.
+
+### Migration from 0.3.x
+
+```xml
+<!-- before -->
+<TargetFramework>net10.0</TargetFramework>
+<!-- after -->
+<TargetFramework>net11.0</TargetFramework>
+```
+
+MAUI apps: use `net11.0-android`/`-ios`/`-maccatalyst`/`-windows10.0.19041.0` and `Microsoft.Maui.Controls` 11.x.
+Nothing else changes — `UseMolDraw()`, `AddMolDrawCore()`, `IChemistryEngine` and the bindable properties are the same.
+
 ## [0.3.0] - 2026-11-17
 
 Chemistry engine and renderer are now separated by an interface, so NCDK is no longer a dependency of the MAUI control.
@@ -68,7 +100,8 @@ builder.Services.AddMolDrawCore();          // + using MolDraw.Core; restores th
   hover with MVVM bindings and commands, light/dark themes, hit testing, PNG/SVG export.
 - x64 and ARM64 support: Windows (WinUI), Android, iOS, Mac Catalyst, plus `net10.0` for server/Avalonia use.
 
-[Unreleased]: https://github.com/Agredo/MolDraw.Net/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/Agredo/MolDraw.Net/compare/v0.4.0...HEAD
+[0.4.0]: https://github.com/Agredo/MolDraw.Net/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/Agredo/MolDraw.Net/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/Agredo/MolDraw.Net/compare/v0.1.1...v0.2.0
 [0.1.1]: https://github.com/Agredo/MolDraw.Net/compare/v0.1.0...v0.1.1

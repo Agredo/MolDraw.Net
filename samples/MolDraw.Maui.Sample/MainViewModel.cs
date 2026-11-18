@@ -17,9 +17,16 @@ public partial class MainViewModel : ObservableObject
     {
         _loader = loader;
         SelectedMolecule = Molecules[0];
+        Smiles = string.Empty;
+        HighlightMode = "Gradient";
+        Colormap = Colormap.Viridis;
+        ShowColorBar = true;
+        LastTapped = "Tap an atom";
+        BondWidth = 1.6;
+        FontSize = 14;
     }
 
-    public IReadOnlyList<MoleculeItem> Molecules { get; } =
+    public MoleculeItem[] Molecules { get; } =
     [
         new("Caffeine", "CN1C=NC2=C1C(=O)N(C(=O)N2C)C"),
         new("Aspirin", "CC(=O)OC1=CC=CC=C1C(=O)O"),
@@ -32,60 +39,60 @@ public partial class MainViewModel : ObservableObject
 
     public IReadOnlyList<Colormap> Colormaps => Colormap.BuiltIn;
 
-    public IReadOnlyList<string> HighlightModes { get; } = ["None", "Gradient", "Random"];
+    public string[] HighlightModes { get; } = ["None", "Gradient", "Random"];
 
     [ObservableProperty]
-    private MoleculeItem? selectedMolecule;
+    public partial MoleculeItem? SelectedMolecule { get; set; }
 
     [ObservableProperty]
-    private string smiles = string.Empty;
+    public partial string Smiles { get; set; }
 
     /// <summary>Pushed by MoleculeView (OneWayToSource).</summary>
     [ObservableProperty]
-    private string? errorMessage;
+    public partial string? ErrorMessage { get; set; }
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(RenderOptions), nameof(Background))]
-    private bool isDark;
+    public partial bool IsDark { get; set; }
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(RenderOptions))]
-    private double bondWidth = 1.6;
+    public partial double BondWidth { get; set; }
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(RenderOptions))]
-    private double fontSize = 14;
+    public partial double FontSize { get; set; }
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(RenderOptions))]
-    private bool aromaticCircles;
+    public partial bool AromaticCircles { get; set; }
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(RenderOptions))]
-    private bool showAtomIndices;
+    public partial bool ShowAtomIndices { get; set; }
 
     [ObservableProperty]
-    private string highlightMode = "Gradient";
+    public partial string HighlightMode { get; set; }
 
     [ObservableProperty]
-    private Colormap colormap = Colormap.Viridis;
+    public partial Colormap Colormap { get; set; }
 
     [ObservableProperty]
-    private bool showColorBar = true;
+    public partial bool ShowColorBar { get; set; }
 
     [ObservableProperty]
-    private IReadOnlyList<float>? atomWeights;
+    public partial IReadOnlyList<float>? AtomWeights { get; set; }
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(AtomInfo))]
-    private int? selectedAtomIndex;
+    public partial int? SelectedAtomIndex { get; set; }
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(AtomInfo))]
-    private int? hoveredAtomIndex;
+    public partial int? HoveredAtomIndex { get; set; }
 
     [ObservableProperty]
-    private string lastTapped = "Tap an atom";
+    public partial string LastTapped { get; set; }
 
     public MoleculeRenderOptions RenderOptions => (IsDark ? MoleculeRenderOptions.Dark : MoleculeRenderOptions.Light) with
     {

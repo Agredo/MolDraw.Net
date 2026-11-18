@@ -6,9 +6,9 @@ Primary consumer: a FLARE mass-spectrometry app (MVVM, CommunityToolkit.Mvvm) th
 
 ## 0. Technology baseline (fixed)
 
-- .NET 10, C# latest, nullable enabled, `TreatWarningsAsErrors` for library projects.
-- .NET MAUI 10 (`net10.0-android;net10.0-ios;net10.0-maccatalyst;net10.0-windows10.0.19041.0`; Windows-only builds must work on a machine with only the `maui-windows` workload → make non-Windows TFMs conditional on the OS/installed workloads).
-- **SkiaSharp 3.119.x** + `SkiaSharp.Views.Maui.Controls` 3.119.x (must match the consumer apps; do **not** use SkiaSharp 4.x).
+- .NET 11, C# latest, nullable enabled, `TreatWarningsAsErrors` for library projects.
+- .NET MAUI 11 (`net11.0-android;net11.0-ios;net11.0-maccatalyst;net11.0-windows10.0.19041.0`; Windows-only builds must work on a machine with only the `maui-windows` workload → make non-Windows TFMs conditional on the OS/installed workloads).
+- **SkiaSharp 4.156.x** + `SkiaSharp.Views.Maui.Controls` 4.156.x.
 - CommunityToolkit.Mvvm 8.4.x for the sample.
 - `.slnx` solution, `Directory.Build.props`, central package management (`Directory.Packages.props`).
 - xUnit for tests.
@@ -153,7 +153,7 @@ Nullable, XML docs on public API, DI where useful, no service locator, no static
 
 ## 8. Workflow
 
-1. Analyse NCDK (actual package, API, dependencies, license) and SkiaSharp 3.119 text APIs; write a short findings + architecture proposal and **wait for approval** before implementing.
+1. Analyse NCDK (actual package, API, dependencies, license) and SkiaSharp 4.156 text APIs; write a short findings + architecture proposal and **wait for approval** before implementing.
 2. Implement Core → Skia (+ tests) → MAUI → sample → packaging → README + `docs/ARCHITECTURE.md`.
 3. `dotnet build` and `dotnet test` must pass; `dotnet pack` must produce the three packages; run the sample on Windows.
 

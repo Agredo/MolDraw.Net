@@ -1,13 +1,13 @@
 <Project>
   <PropertyGroup>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
-    <SkiaSharpVersion>3.119.4</SkiaSharpVersion>
+    <SkiaSharpVersion>4.156.1</SkiaSharpVersion>
   </PropertyGroup>
   <ItemGroup>
     <!-- Chemistry -->
     <PackageVersion Include="NCDK" Version="1.6.1" />
 
-    <!-- Rendering (do NOT move to SkiaSharp 4.x) -->
+    <!-- Rendering: keep the three SkiaSharp packages on the same version. -->
     <PackageVersion Include="SkiaSharp" Version="$(SkiaSharpVersion)" />
     <PackageVersion Include="SkiaSharp.NativeAssets.Linux" Version="$(SkiaSharpVersion)" />
     <PackageVersion Include="SkiaSharp.Views.Maui.Controls" Version="$(SkiaSharpVersion)" />
@@ -17,7 +17,6 @@
     <PackageVersion Include="CommunityToolkit.Mvvm" Version="8.4.2" />
 
     <!-- Infrastructure -->
-    <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="11.0.0" />
     <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="11.0.0" />
 
     <!-- Tests -->

@@ -2,22 +2,22 @@
 
 ```mermaid
 flowchart LR
-    subgraph Dep["MolDraw.Depiction (net10.0, no deps)"]
+    subgraph Dep["MolDraw.Depiction (net11.0, no deps)"]
         I[IChemistryEngine<br/>Depict smiles -> MoleculeDepiction]
         D[(MoleculeDepiction)]
     end
-    subgraph Core["MolDraw.Core (net10.0, NCDK)"]
+    subgraph Core["MolDraw.Core (net11.0, NCDK)"]
         subgraph NcdkNs["MolDraw.Core.Ncdk"]
             L[MoleculeLoader<br/>SMILES / MOL / SDF] --> M[(IAtomContainer)]
             M --> B[DepictionBuilder<br/>layout, aromaticity, rings,<br/>wedges, H placement]
         end
         NE[NcdkDepictionEngine] -.implements.-> I
     end
-    subgraph Skia["MolDraw.Skia (net10.0, SkiaSharp 3.119)"]
+    subgraph Skia["MolDraw.Skia (net11.0, SkiaSharp 4.156)"]
         R[MoleculeRenderer] --> RM[RenderedMolecule<br/>transform + hit testing]
         E[MoleculeImageExporter<br/>PNG / SVG]
     end
-    subgraph Maui["MolDraw.Maui (net10.0-*, no chemistry)"]
+    subgraph Maui["MolDraw.Maui (net11.0-*, no chemistry)"]
         V[MoleculeView]
     end
     B --> D
@@ -35,8 +35,8 @@ flowchart LR
 | Assembly | Allowed dependencies | Why |
 |---|---|---|
 | `MolDraw.Depiction` | none | Shared contract between chemistry and rendering: the depiction model plus the `IChemistryEngine` seam |
-| `MolDraw.Core` | Depiction, NCDK, DI abstractions | All NCDK usage lives here; replaceable |
-| `MolDraw.Skia` | Depiction, SkiaSharp, DI abstractions | No NCDK (no LGPL), no MAUI → Avalonia/server |
+| `MolDraw.Core` | Depiction, NCDK, `Microsoft.Extensions.DependencyInjection.Abstractions` (from the .NET shared framework) | All NCDK usage lives here; replaceable |
+| `MolDraw.Skia` | Depiction, SkiaSharp, `Microsoft.Extensions.DependencyInjection.Abstractions` (from the .NET shared framework) | No NCDK (no LGPL), no MAUI → Avalonia/server |
 | `MolDraw.Maui` | Depiction, Skia, MAUI, SkiaSharp.Views.Maui | Only wiring: bindable properties, gestures, theme — and no chemistry toolkit |
 
 The depiction model lives in its own tiny package because Core must not reference SkiaSharp and Skia must not reference
@@ -150,7 +150,7 @@ Findings while building it:
 
 ## Target frameworks
 
-All libraries target `net10.0`. `MolDraw.Maui` selects its platform TFMs by build OS (Windows → windows; macOS →
+All libraries target `net11.0`. `MolDraw.Maui` selects its platform TFMs by build OS (Windows → windows; macOS →
 android/ios/maccatalyst) with opt-in switches (`MolDrawAllTargets`, `MolDrawAndroid`, …). Workload pack folders are
 not used for detection because stale packs of older SDKs make that unreliable. `TargetFrameworks` is composed with
 plain property appends – a property function such as `$(TargetFrameworks.Trim(';'))` must not be used, because MSBuild
@@ -160,7 +160,7 @@ also sets `AppendRuntimeIdentifierToOutputPath=false`, so a RID-specific build o
 
 ## Architectures
 
-There is no architecture-specific code: everything above SkiaSharp is managed (`net10.0`/platform TFMs) and the native
+There is no architecture-specific code: everything above SkiaSharp is managed (`net11.0`/platform TFMs) and the native
 Skia binaries are supplied by SkiaSharp's runtime packages for the consuming app's RID (`win-arm64`, `android-arm64`,
 `osx`, `maccatalyst`, `ios`). x64 and ARM64 are therefore supported without extra package variants; verified on
 win-arm64 (tests, WinUI publish, console rendering from the packed NuGet packages) and android-arm64 (arm64-v8a APK).

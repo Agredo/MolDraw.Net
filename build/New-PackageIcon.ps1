@@ -20,16 +20,20 @@ param(
 
 $ErrorActionPreference = 'Stop'
 
-$skiaVersion = '3.119.4'
+$skiaVersion = '4.156.1'
 $work = Join-Path ([System.IO.Path]::GetTempPath()) ("moldraw-icon-" + [guid]::NewGuid().ToString('N'))
 
 New-Item -ItemType Directory -Path $work -Force | Out-Null
 try {
+    # The scratch project lives in the temp directory, which may sit under a user-wide global.json that pins an older
+    # SDK; pin the .NET 11 line locally so the generator always builds (roll forward across .NET 11 SDK versions).
+    '{ "sdk": { "version": "11.0.100", "rollForward": "latestMinor" } }' | Set-Content (Join-Path $work 'global.json')
+
     @"
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net10.0</TargetFramework>
+    <TargetFramework>net11.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally>
@@ -49,8 +53,9 @@ var canvas = surface.Canvas;
 canvas.Clear(SKColors.Transparent);
 
 // Card: rounded square with a vertical slate gradient.
-using var card = new SKPath();
-card.AddRoundRect(new SKRect(4, 4, Size - 4, Size - 4), 54, 54);
+using var cardBuilder = new SKPathBuilder();
+cardBuilder.AddRoundRect(new SKRect(4, 4, Size - 4, Size - 4), 54, 54, SKPathDirection.Clockwise);
+using var card = cardBuilder.Detach();
 using (var fill = new SKPaint
 {
     IsAntialias = true,
@@ -81,14 +86,15 @@ using (var glow = new SKPaint
 // Benzene ring, pointy-top hexagon.
 const float cx = Size / 2f, cy = Size / 2f;
 const float outer = 78f;
-using var hex = new SKPath();
+using var hexBuilder = new SKPathBuilder();
 for (var i = 0; i < 6; i++)
 {
     var angle = MathF.PI / 180 * (60 * i - 90);
     var p = new SKPoint(cx + outer * MathF.Cos(angle), cy + outer * MathF.Sin(angle));
-    if (i == 0) hex.MoveTo(p); else hex.LineTo(p);
+    if (i == 0) hexBuilder.MoveTo(p); else hexBuilder.LineTo(p);
 }
-hex.Close();
+hexBuilder.Close();
+using var hex = hexBuilder.Detach();
 
 using var ringStroke = new SKPaint
 {

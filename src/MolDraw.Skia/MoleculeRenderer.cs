@@ -401,15 +401,14 @@ public sealed class MoleculeRenderer : IMoleculeRenderer
         switch (bond.Stereo)
         {
             case BondStereoDisplay.Wedge:
-                using (var path = new SKPath())
-                {
-                    path.MoveTo(tb.X + (nx * frame.BondWidth * 0.3f), tb.Y + (ny * frame.BondWidth * 0.3f));
-                    path.LineTo(te.X + (nx * halfWidth), te.Y + (ny * halfWidth));
-                    path.LineTo(te.X - (nx * halfWidth), te.Y - (ny * halfWidth));
-                    path.LineTo(tb.X - (nx * frame.BondWidth * 0.3f), tb.Y - (ny * frame.BondWidth * 0.3f));
-                    path.Close();
+                var wedge = new SKPathBuilder();
+                wedge.MoveTo(tb.X + (nx * frame.BondWidth * 0.3f), tb.Y + (ny * frame.BondWidth * 0.3f));
+                wedge.LineTo(te.X + (nx * halfWidth), te.Y + (ny * halfWidth));
+                wedge.LineTo(te.X - (nx * halfWidth), te.Y - (ny * halfWidth));
+                wedge.LineTo(tb.X - (nx * frame.BondWidth * 0.3f), tb.Y - (ny * frame.BondWidth * 0.3f));
+                wedge.Close();
+                using (var path = wedge.Detach())
                     ctx.Canvas.DrawPath(path, ctx.Fill);
-                }
 
                 break;
 
@@ -433,26 +432,25 @@ public sealed class MoleculeRenderer : IMoleculeRenderer
                 break;
 
             case BondStereoDisplay.Wavy:
-                using (var path = new SKPath())
+                var wavy = new SKPathBuilder();
+                var waves = Math.Max(3, (int)MathF.Round(len / Math.Max(4f, halfWidth * 1.6f)));
+                var amplitude = halfWidth * 0.7f;
+                wavy.MoveTo(tb);
+                for (var i = 0; i < waves; i++)
                 {
-                    var waves = Math.Max(3, (int)MathF.Round(len / Math.Max(4f, halfWidth * 1.6f)));
-                    var amplitude = halfWidth * 0.7f;
-                    path.MoveTo(tb);
-                    for (var i = 0; i < waves; i++)
-                    {
-                        var t0 = (float)i / waves;
-                        var t1 = (float)(i + 1) / waves;
-                        var tm = (t0 + t1) / 2;
-                        var sign = i % 2 == 0 ? 1 : -1;
-                        path.QuadTo(
-                            tb.X + (dx * tm) + (nx * amplitude * 2 * sign),
-                            tb.Y + (dy * tm) + (ny * amplitude * 2 * sign),
-                            tb.X + (dx * t1),
-                            tb.Y + (dy * t1));
-                    }
-
-                    ctx.Canvas.DrawPath(path, ctx.Stroke);
+                    var t0 = (float)i / waves;
+                    var t1 = (float)(i + 1) / waves;
+                    var tm = (t0 + t1) / 2;
+                    var sign = i % 2 == 0 ? 1 : -1;
+                    wavy.QuadTo(
+                        tb.X + (dx * tm) + (nx * amplitude * 2 * sign),
+                        tb.Y + (dy * tm) + (ny * amplitude * 2 * sign),
+                        tb.X + (dx * t1),
+                        tb.Y + (dy * t1));
                 }
+
+                using (var path = wavy.Detach())
+                    ctx.Canvas.DrawPath(path, ctx.Stroke);
 
                 break;
         }

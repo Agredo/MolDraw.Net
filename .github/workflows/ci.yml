@@ -23,7 +23,7 @@ jobs:
 
       - uses: actions/setup-dotnet@v4
         with:
-          # The packages target net10.0; any SDK that can build .NET 10 works.
+          # The packages target net11.0; any SDK that can build .NET 11 works.
           dotnet-version: '11.0.x'
 
       - name: Install MAUI workload

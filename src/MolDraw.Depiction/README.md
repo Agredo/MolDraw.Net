@@ -16,7 +16,7 @@ toolkit — NCDK, RDKit, Indigo, OpenChemLib or your own code — drive the
 dotnet add package MolDraw.Depiction
 ```
 
-Targets `net10.0`. Dependency-free, so it is safe to reference from any layer of your app.
+Targets `net11.0`. Dependency-free, so it is safe to reference from any layer of your app.
 
 ## What you get
 

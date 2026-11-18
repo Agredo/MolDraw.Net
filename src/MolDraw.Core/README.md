@@ -16,7 +16,7 @@ per-atom model output lines up with the picture.
 dotnet add package MolDraw.Core
 ```
 
-Targets `net10.0`. Pulls in `MolDraw.Depiction` and NCDK.
+Targets `net11.0`. Pulls in `MolDraw.Depiction` and NCDK.
 
 ## Quick start: .NET MAUI
 

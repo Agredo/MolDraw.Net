@@ -16,7 +16,7 @@ dotnet add package MolDraw.Maui      # the control (pulls MolDraw.Skia + MolDraw
 dotnet add package MolDraw.Core      # optional: NCDK engine so `Smiles` works out of the box
 ```
 
-Requires .NET 10, .NET MAUI 10 and SkiaSharp 3.119.x (not 4.x).
+Requires .NET 11, .NET MAUI 11 and SkiaSharp 4.156.x.
 
 ## Quick start
 
@@ -93,10 +93,10 @@ always renders. That also means: **no LGPL dependency** in this package — NCDK
 
 | Platform | Package target |
 |---|---|
-| Windows 10/11 (WinUI), x64 + ARM64 | `net10.0-windows10.0.19041.0` |
-| Android (arm64-v8a, arm, x64, x86) | `net10.0-android36.0` |
-| iOS 15+ | `net10.0-ios26.0` |
-| Mac Catalyst 15+ | `net10.0-maccatalyst26.0` |
+| Windows 10/11 (WinUI), x64 + ARM64 | `net11.0-windows10.0.19041.0` |
+| Android (arm64-v8a, arm, x64, x86) | `net11.0-android37.0` |
+| iOS 15+ | `net11.0-ios27.2` |
+| Mac Catalyst 15+ | `net11.0-maccatalyst27.2` |
 
 The control is managed code; native Skia binaries come from SkiaSharp for the consuming app's runtime identifier.
 
