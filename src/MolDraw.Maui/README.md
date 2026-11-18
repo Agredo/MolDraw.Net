@@ -46,16 +46,22 @@ builder.Services.AddMolDrawCore();       // chemistry engine (SMILES -> depictio
 ```csharp
 public partial class PeakViewModel : ObservableObject
 {
-    [ObservableProperty] private string smiles = "CC(=O)OC1=CC=CC=C1C(=O)O";
-    [ObservableProperty] private IReadOnlyList<float>? atomWeights;   // 0..1 per atom index
-    [ObservableProperty] private int? selectedAtomIndex;              // TwoWay: tap selects/deselects
-    [ObservableProperty] private string? smilesError;                 // pushed by the control
+    public PeakViewModel() => Smiles = "CC(=O)OC1=CC=CC=C1C(=O)O";
 
-    public void ShowPeak(float[] modelOutput) => AtomWeights = modelOutput;  // assign a new list to refresh
+    [ObservableProperty] public partial string Smiles { get; set; }           // OneWay
+    [ObservableProperty] public partial float[]? AtomWeights { get; set; }    // 0..1 per atom index
+    [ObservableProperty] public partial int? SelectedAtomIndex { get; set; }  // TwoWay: tap selects/deselects
+    [ObservableProperty] public partial string? SmilesError { get; set; }     // pushed by the control
+
+    public void ShowPeak(float[] modelOutput) => AtomWeights = modelOutput;   // assign a new array to refresh
 
     [RelayCommand] private void AtomTapped(int atomIndex) { /* show matching peaks */ }
 }
 ```
+
+`[ObservableProperty]` needs a partial property (MVVM Toolkit 8.4+, C# 13); field-based declarations raise
+`MVVMTK0045` in WinUI builds. The .NET 11 / SkiaSharp 4 requirements are in the
+[main README](https://github.com/Agredo/MolDraw.Net).
 
 Atom indices in `AtomWeights` are the heavy-atom indices of the SMILES — the same order RDKit uses — so model outputs
 can be bound directly. Recolouring never recomputes coordinates.

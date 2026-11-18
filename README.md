@@ -10,7 +10,7 @@ depiction model.
 [![MolDraw.Core](https://img.shields.io/nuget/v/MolDraw.Core?label=MolDraw.Core&logo=nuget)](https://www.nuget.org/packages/MolDraw.Core)
 [![MolDraw.Depiction](https://img.shields.io/nuget/v/MolDraw.Depiction?label=MolDraw.Depiction&logo=nuget)](https://www.nuget.org/packages/MolDraw.Depiction)
 [![license](https://img.shields.io/badge/license-Apache--2.0-green)](LICENSE)
-[![.NET](https://img.shields.io/badge/.NET-10-512BD4)](https://dotnet.microsoft.com)
+[![.NET](https://img.shields.io/badge/.NET-11-512BD4)](https://dotnet.microsoft.com)
 [![CI](https://github.com/Agredo/MolDraw.Net/actions/workflows/ci.yml/badge.svg)](https://github.com/Agredo/MolDraw.Net/actions/workflows/ci.yml)
 
 <table>
@@ -106,6 +106,32 @@ no longer pulls in NCDK, LGPL). Three changes:
    `DepictionBuildOptions`, `CarbonLabelMode`, `MoleculeParseException`, `DepictionException`. `MoleculeLoaderOptions`
    and `MoleculeFormat` moved to `MolDraw.Core.Ncdk`. Add the matching using directive.
 
+### Upgrading from 0.3.x
+
+0.4.0 moves all four packages to **.NET 11**, **.NET MAUI 11** and **SkiaSharp 4.156**. The public API is unchanged, the
+target frameworks are not – a consuming app has to follow:
+
+1. **Retarget to `net11.0`** (`net11.0-android` / `-ios` / `-maccatalyst` / `net11.0-windows10.0.19041.0` for MAUI
+   apps) and use `Microsoft.Maui.Controls` 11.x. Requires the .NET 11 SDK (11.0.100+) and the .NET 11 MAUI workloads.
+2. **Reference SkiaSharp 4.156.x** if your own code touches `SKCanvas`/`SKColor`/`SKPath`. SkiaSharp 4 obsoleted the
+   mutable `SKPath` drawing methods; build paths with `SKPathBuilder` instead:
+
+   ```csharp
+   var builder = new SKPathBuilder();
+   builder.MoveTo(x0, y0);
+   builder.LineTo(x1, y1);
+   using var path = builder.Detach();   // SKPath is still what DrawPath takes
+   canvas.DrawPath(path, paint);
+   ```
+
+3. **Android minimum API 24.** Set `SupportedOSPlatformVersion` to `24.0` or higher – the Android SDK that MAUI 11
+   targets rejects lower values with `XA4216`.
+4. **Drop** an explicit `Microsoft.Extensions.DependencyInjection.Abstractions` package reference. The assembly is part
+   of the .NET 11 shared framework, so referencing it raises `NU1510`. `AddMolDrawCore()` and `AddMolDrawSkia()` work
+   without it.
+
+`UseMolDraw()`, `AddMolDrawCore()`, `IChemistryEngine`, `MoleculeView` and all bindable properties are untouched.
+
 ## MAUI quick start
 
 ```csharp
@@ -133,18 +159,26 @@ builder.Services.AddMolDrawCore();          // the chemistry engine (NCDK): SMIL
 ```csharp
 public partial class PeakViewModel : ObservableObject
 {
-    [ObservableProperty] private string smiles = "CC(=O)OC1=CC=CC=C1C(=O)O";
-    [ObservableProperty] private IReadOnlyList<float>? atomWeights;   // one value per atom index, 0..1
-    [ObservableProperty] private int? selectedAtomIndex;              // two-way: tap selects/deselects
-    [ObservableProperty] private string? smilesError;                 // pushed by the control
+    public PeakViewModel() => Smiles = "CC(=O)OC1=CC=CC=C1C(=O)O";
+
+    [ObservableProperty] public partial string Smiles { get; set; }           // OneWay to the control
+    [ObservableProperty] public partial float[]? AtomWeights { get; set; }    // one value per atom index, 0..1
+    [ObservableProperty] public partial int? SelectedAtomIndex { get; set; }  // two-way: tap selects/deselects
+    [ObservableProperty] public partial string? SmilesError { get; set; }     // pushed by the control
 
     partial void OnSelectedAtomIndexChanged(int? value) => HighlightPeaksForAtom(value);
 
-    public void ShowPeak(float[] modelOutput) => AtomWeights = modelOutput; // assign a new list to refresh
+    public void ShowPeak(float[] modelOutput) => AtomWeights = modelOutput;   // assign a new array to refresh
 
     [RelayCommand] private void AtomTapped(int atomIndex) { /* ... */ }
 }
 ```
+
+`[ObservableProperty]` goes on a **partial property** (MVVM Toolkit 8.4+, C# 13 — both standard on .NET 11); the
+field-based syntax now raises `MVVMTK0045` in WinUI builds. A property initialised with a collection expression should
+have a concrete type (`MoleculeItem[] Molecules { get; } = [ ... ]` rather than `IReadOnlyList<MoleculeItem>`), otherwise
+WinUI's CsWinRT analyzer warns `CsWinRT1032`: a non-mutable interface target has no defined concrete type, so the
+collection cannot be projected in a trimming/AOT-safe way.
 
 ### `MoleculeView` properties
 
